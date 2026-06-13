@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Generus Gonjen 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --primary: #22C55E;
+  --primary-dark: #16A34A;
+  --primary-light: #DCFCE7;
+  --secondary: #0F172A;
+  --warning: #FACC15;
+  --warning-light: #FEF9C3;
+  --danger: #EF4444;
+  --danger-light: #FEE2E2;
+  --bg: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface2: #F1F5F9;
+  --border: #E2E8F0;
+  --text: #0F172A;
+  --text2: #64748B;
+  --text3: #94A3B8;
+  --sidebar-w: 240px;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 24px rgba(0,0,0,.10);
+}
+[data-theme="dark"] {
+  --bg: #0F172A;
+  --surface: #1E293B;
+  --surface2: #334155;
+  --border: #334155;
+  --text: #F1F5F9;
+  --text2: #94A3B8;
+  --text3: #64748B;
+  --primary-light: #14532D;
+  --shadow: 0 1px 3px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.3);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); transition: background .3s, color .3s; }
+a { text-decoration: none; color: inherit; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed; top: 0; left: 0; height: 100vh; width: var(--sidebar-w);
+  background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 100; transition: transform .3s;
+}
+.sidebar-logo {
+  display: flex; align-items: center; gap: 10px; padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-icon {
+  width: 38px; height: 38px; background: var(--primary); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;
+}
+.logo-text { font-weight: 700; font-size: 13px; line-height: 1.3; color: var(--text); }
+.logo-text span { color: var(--primary); }
+.nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; padding: 8px 8px 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; color: var(--text2);
+  margin-bottom: 2px;
+}
+.nav-item i { width: 18px; text-align: center; font-size: 15px; }
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+.sidebar-footer { padding: 12px; border-top: 1px solid var(--border); }
+.dark-toggle {
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+  border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500;
+  color: var(--text2); transition: all .15s;
+}
+.dark-toggle:hover { background: var(--surface2); color: var(--text); }
+.toggle-pill {
+  width: 36px; height: 20px; background: var(--border); border-radius: 20px;
+  position: relative; margin-left: auto; transition: background .2s;
+}
+.toggle-pill.on { background: var(--primary); }
+.toggle-pill::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 14px; height: 14px; border-radius: 50%; background: white; transition: left .2s;
+}
+.toggle-pill.on::after { left: 19px; }
+.admin-row {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px 0; font-size: 12px; color: var(--text2);
+}
+.admin-avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 15px;
+}
+
+/* Main */
+.main { margin-left: var(--sidebar-w); min-height: 100vh; }
+.topbar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 16px 28px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar-title h1 { font-size: 20px; font-weight: 700; color: var(--text); }
+.topbar-title p { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.topbar-date {
+  display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500;
+  color: var(--text2); background: var(--surface2); border: 1px solid var(--border);
+  padding: 6px 12px; border-radius: 8px;
+}
+.content { padding: 24px 28px; }
+
+/* Pages */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Cards */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px;
+}
+.stat-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.stat-val { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
+.stat-label { font-size: 12px; color: var(--text2); font-weight: 500; }
+.ic-green { background: var(--primary-light); color: var(--primary); }
+.ic-blue { background: #DBEAFE; color: #2563EB; }
+.ic-pink { background: #FCE7F3; color: #DB2777; }
+.ic-amber { background: #FEF3C7; color: #D97706; }
+
+.mid-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.mid-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 16px;
+}
+.donut-wrap { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
+.donut-wrap canvas { width: 80px !important; height: 80px !important; }
+.donut-text {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  font-size: 14px; font-weight: 700; color: var(--text); text-align: center; line-height: 1;
+}
+.mid-info h3 { font-size: 15px; font-weight: 700; color: var(--text); }
+.mid-info p { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.mid-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; margin-top: 6px; }
+.badge-success { background: var(--primary-light); color: var(--primary); }
+.badge-warning { background: var(--warning-light); color: #92400E; }
+.badge-danger { background: var(--danger-light); color: #991B1B; }
+
+.charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.chart-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; box-shadow: var(--shadow);
+}
+.chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.chart-head h3 { font-size: 14px; font-weight: 600; color: var(--text); }
+.chart-head select {
+  font-size: 12px; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface2); color: var(--text); cursor: pointer; font-family: inherit;
+}
+
+/* Section header */
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.section-head h2 { font-size: 18px; font-weight: 700; color: var(--text); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px;
+  border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer;
+  border: none; transition: all .15s; font-family: inherit;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+.btn-outline { background: none; border: 1px solid var(--border); color: var(--text2); }
+.btn-outline:hover { background: var(--surface2); color: var(--text); }
+.btn-danger { background: var(--danger-light); color: var(--danger); border: none; }
+.btn-danger:hover { background: var(--danger); color: white; }
+.btn-edit { background: #DBEAFE; color: #2563EB; border: none; }
+.btn-edit:hover { background: #2563EB; color: white; }
+
+/* Search & filter row */
+.toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.search-box {
+  display: flex; align-items: center; gap: 8px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; flex: 1; min-width: 200px;
+}
+.search-box input { border: none; background: none; font-size: 13px; color: var(--text); outline: none; flex: 1; font-family: inherit; }
+.search-box i { color: var(--text3); font-size: 14px; }
+.filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip {
+  padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: 1.5px solid var(--border); background: var(--surface2); color: var(--text2); transition: all .15s;
+}
+.chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase;
+  letter-spacing: .7px; padding: 10px 16px; border-bottom: 1px solid var(--border);
+  text-align: left; background: var(--surface2); white-space: nowrap;
+}
+th:first-child { border-radius: 8px 0 0 0; }
+th:last-child { border-radius: 0 8px 0 0; }
+td { padding: 13px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface2); cursor: pointer; }
+.table-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.name-cell { display: flex; align-items: center; gap: 10px; }
+.avatar {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light);
+  color: var(--primary); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.av-blue { background: #DBEAFE; color: #2563EB; }
+.av-pink { background: #FCE7F3; color: #DB2777; }
+.av-amber { background: #FEF3C7; color: #D97706; }
+.name-main { font-weight: 600; font-size: 13px; }
+.name-sub { font-size: 11px; color: var(--text3); }
+.kategori-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+}
+.kat-muda { background: #DBEAFE; color: #1D4ED8; }
+.kat-mudi { background: #FCE7F3; color: #BE185D; }
+.kat-cabe { background: #FEF3C7; color: #92400E; }
+.action-btns { display: flex; gap: 6px; }
+
+/* Kehadiran cards */
+.hadir-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 16px; }
+.hadir-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  transition: all .15s;
+}
+.hadir-card:hover { box-shadow: var(--shadow-md); }
+.hadir-card-left { display: flex; align-items: center; gap: 12px; }
+.hadir-card-name { font-weight: 600; font-size: 13px; color: var(--text); }
+.hadir-btns { display: flex; gap: 6px; }
+.hbtn {
+  width: 36px; height: 36px; border-radius: 10px; border: none; cursor: pointer;
+  font-size: 15px; display: flex; align-items: center; justify-content: center; transition: all .15s;
+}
+.hbtn-hadir { background: var(--primary-light); color: var(--primary); }
+.hbtn-izin { background: var(--warning-light); color: #92400E; }
+.hbtn-alfa { background: var(--danger-light); color: var(--danger); }
+.hbtn.selected-hadir { background: var(--primary); color: white; transform: scale(1.1); }
+.hbtn.selected-izin { background: var(--warning); color: #78350F; transform: scale(1.1); }
+.hbtn.selected-alfa { background: var(--danger); color: white; transform: scale(1.1); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot-hadir { background: var(--primary); }
+.dot-izin { background: var(--warning); }
+.dot-alfa { background: var(--danger); }
+.dot-none { background: var(--border); }
+
+/* Infaq */
+.infaq-table-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.infaq-input {
+  width: 120px; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border);
+  font-size: 13px; font-family: inherit; background: var(--surface2); color: var(--text); outline: none;
+  transition: border .15s;
+}
+.infaq-input:focus { border-color: var(--primary); }
+.infaq-total { font-size: 15px; font-weight: 700; color: var(--primary); }
+.infaq-total-row { background: var(--primary-light); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+.infaq-total-row span { font-size: 13px; font-weight: 600; color: var(--primary-dark); }
+
+/* Date picker row */
+.date-row {
+  display: flex; align-items: center; gap: 12px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 20px;
+  margin-bottom: 16px; box-shadow: var(--shadow);
+}
+.date-row label { font-size: 13px; font-weight: 600; color: var(--text2); white-space: nowrap; }
+.date-row input[type="date"] {
+  border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px;
+  font-size: 13px; font-family: inherit; background: var(--surface2); color: var(--text); outline: none; cursor: pointer;
+}
+.date-row input[type="date"]:focus { border-color: var(--primary); }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border-radius: 16px; width: 100%; max-width: 520px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow: hidden; transform: translateY(20px); transition: transform .2s;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-header {
+  padding: 20px 24px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-header h3 { font-size: 16px; font-weight: 700; color: var(--text); }
+.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text3); line-height: 1; }
+.modal-body { padding: 20px 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 5px; }
+.form-group input, .form-group select {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 9px;
+  font-size: 13px; font-family: inherit; background: var(--surface2); color: var(--text); outline: none; transition: border .15s;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Profile modal */
+.profile-modal-top { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.profile-avatar-lg {
+  width: 64px; height: 64px; border-radius: 50%; background: var(--primary-light);
+  color: var(--primary); font-size: 24px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.profile-name { font-size: 18px; font-weight: 700; color: var(--text); }
+.profile-info-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 13px; color: var(--text2); }
+.profile-info-row i { color: var(--primary); width: 16px; }
+.profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+.profile-stat { background: var(--surface2); border-radius: 10px; padding: 14px; text-align: center; }
+.profile-stat-val { font-size: 22px; font-weight: 700; color: var(--primary); }
+.profile-stat-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.tab {
+  padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+  color: var(--text3); border-bottom: 2px solid transparent; transition: all .15s;
+}
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.riwayat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.riwayat-row:last-child { border-bottom: none; }
+
+/* Toast */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 500; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  display: flex; align-items: center; gap: 10px; background: var(--secondary);
+  color: white; padding: 12px 18px; border-radius: 10px; font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2); transform: translateX(120%); transition: transform .3s; min-width: 220px;
+}
+.toast.show { transform: translateX(0); }
+.toast.success { background: var(--primary); }
+.toast.warning { background: #D97706; }
+.toast.danger { background: var(--danger); }
+.toast i { font-size: 16px; }
+
+/* Laporan */
+.laporan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.laporan-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; text-align: center; box-shadow: var(--shadow);
+}
+.laporan-card i { font-size: 28px; color: var(--primary); margin-bottom: 10px; }
+.laporan-card h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.laporan-card p { font-size: 12px; color: var(--text2); }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
+.empty-state i { font-size: 40px; margin-bottom: 12px; display: block; }
+
+/* Confirm */
+.confirm-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 300;
+  display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.confirm-overlay.open { opacity: 1; pointer-events: all; }
+.confirm-box {
+  background: var(--surface); border-radius: 16px; padding: 28px; max-width: 360px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25); text-align: center;
+  transform: scale(.9); transition: transform .2s;
+}
+.confirm-overlay.open .confirm-box { transform: scale(1); }
+.confirm-icon { font-size: 40px; color: var(--danger); margin-bottom: 12px; }
+.confirm-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+.confirm-box p { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+.confirm-btns { display: flex; gap: 10px; justify-content: center; }
+
+/* Summary bar */
+.summary-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 20px; margin-bottom: 16px; box-shadow: var(--shadow); flex-wrap: wrap; gap: 10px;
+}
+.sum-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.sum-dot { width: 10px; height: 10px; border-radius: 50%; }
+.sum-label { color: var(--text2); }
+.sum-val { font-weight: 700; color: var(--text); }
+.save-btn-row { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+/* Responsive */
+@media(max-width:900px){
+  :root { --sidebar-w: 0px; }
+  .sidebar { transform: translateX(-240px); }
+  .sidebar.open { transform: translateX(0); width: 240px; }
+  .main { margin-left: 0; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .mid-grid { grid-template-columns: 1fr; }
+  .charts-grid { grid-template-columns: 1fr; }
+  .laporan-grid { grid-template-columns: 1fr 1fr; }
+  .hamburger { display: flex !important; }
+}
+.hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text); margin-right: 12px; }
+
+.overlay-bg { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 99; display: none; }
+.overlay-bg.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fa-solid fa-seedling"></i></div>
+    <div class="logo-text"><span>Generus</span><br>Gonjen 1</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-label">Menu</div>
+    <div class="nav-item active" onclick="navigate('dashboard')"><i class="fa-solid fa-house"></i> Dashboard</div>
+    <div class="nav-item" onclick="navigate('generus')"><i class="fa-solid fa-users"></i> Data Generus</div>
+    <div class="nav-item" onclick="navigate('kehadiran')"><i class="fa-solid fa-clipboard-check"></i> Kehadiran</div>
+    <div class="nav-item" onclick="navigate('infaq')"><i class="fa-solid fa-hand-holding-dollar"></i> Infaq</div>
+    <div class="nav-item" onclick="navigate('laporan')"><i class="fa-solid fa-chart-line"></i> Laporan</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="dark-toggle" onclick="toggleDark()">
+      <i class="fa-solid fa-moon"></i> Mode Gelap
+      <div class="toggle-pill" id="darkPill"></div>
+    </div>
+    <div class="admin-row">
+      <div class="admin-avatar"><i class="fa-solid fa-user"></i></div>
+      <div><div style="font-weight:600;font-size:12px;color:var(--text)">Admin Generus</div><div style="font-size:11px;color:var(--text3)">Pengurus</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="overlay-bg" id="overlayBg" onclick="closeSidebar()"></div>
+
+<!-- Main -->
+<main class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-title">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSubtitle">Selamat datang, Admin Generus 👋</p>
+      </div>
+    </div>
+    <div class="topbar-date"><i class="fa-regular fa-calendar"></i><span id="todayDate"></span></div>
+  </div>
+  <div class="content">
+
+    <!-- Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon ic-green"><i class="fa-solid fa-users"></i></div><div class="stat-val" id="s-total">0</div><div class="stat-label">Total Generus</div></div>
+        <div class="stat-card"><div class="stat-icon ic-blue"><i class="fa-solid fa-person"></i></div><div class="stat-val" id="s-muda">0</div><div class="stat-label">Muda</div></div>
+        <div class="stat-card"><div class="stat-icon ic-pink"><i class="fa-solid fa-person-dress"></i></div><div class="stat-val" id="s-mudi">0</div><div class="stat-label">Mudi</div></div>
+        <div class="stat-card"><div class="stat-icon ic-amber"><i class="fa-solid fa-child"></i></div><div class="stat-val" id="s-cabe">0</div><div class="stat-label">Caberawit</div></div>
+      </div>
+      <div class="mid-grid">
+        <div class="mid-card">
+          <div class="donut-wrap"><canvas id="donutChart" role="img" aria-label="Persentase kehadiran bulan ini"></canvas><div class="donut-text" id="donutPct">0%</div></div>
+          <div class="mid-info"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">Kehadiran Bulan Ini</div><h3 id="pctText">0%</h3><div class="mid-badge badge-success" id="pctBadge"><i class="fa-solid fa-thumbs-up"></i> Sangat Baik</div></div>
+        </div>
+        <div class="mid-card">
+          <div class="stat-icon ic-green" style="width:56px;height:56px;font-size:24px;flex-shrink:0"><i class="fa-solid fa-sack-dollar"></i></div>
+          <div class="mid-info"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">Total Infaq Bulan Ini</div><h3 id="infaqTotal" style="font-size:18px">Rp 0</h3><div style="font-size:11px;color:var(--text3);margin-top:4px" id="infaqDate"></div></div>
+        </div>
+        <div class="mid-card">
+          <div class="stat-icon ic-blue" style="width:56px;height:56px;font-size:24px;flex-shrink:0"><i class="fa-solid fa-calendar-days"></i></div>
+          <div class="mid-info"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">Total Pertemuan</div><h3 id="totalPertemuan" style="font-size:28px;font-weight:700">0</h3><div style="font-size:11px;color:var(--text3);margin-top:2px">Kali pertemuan</div></div>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-head"><h3>Grafik Kehadiran Bulanan</h3><select onchange="updateKehadiranChart(this.value)" id="yearSelectK"><option>2025</option><option>2026</option></select></div>
+          <div style="position:relative;height:220px"><canvas id="kehadiranChart" role="img" aria-label="Grafik kehadiran bulanan">Data kehadiran per bulan.</canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><h3>Grafik Infaq Bulanan</h3><select onchange="updateInfaqChart(this.value)" id="yearSelectI"><option>2025</option><option>2026</option></select></div>
+          <div style="position:relative;height:220px"><canvas id="infaqChart" role="img" aria-label="Grafik infaq bulanan">Data infaq per bulan.</canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Generus -->
+    <div class="page" id="page-generus">
+      <div class="section-head">
+        <h2>Data Generus</h2>
+        <button class="btn btn-primary" onclick="openAddModal()"><i class="fa-solid fa-plus"></i> Tambah Generus</button>
+      </div>
+      <div class="toolbar">
+        <div class="search-box"><i class="fa-solid fa-search"></i><input type="text" id="searchInput" placeholder="Cari nama generus..." oninput="renderGenerusTable()" /></div>
+        <div class="filter-chips">
+          <div class="chip active" onclick="setFilter('Semua',this)">Semua</div>
+          <div class="chip" onclick="setFilter('Muda',this)">Muda</div>
+          <div class="chip" onclick="setFilter('Mudi',this)">Mudi</div>
+          <div class="chip" onclick="setFilter('Caberawit',this)">Caberawit</div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Nama</th><th>Kategori</th><th>Tempat Lahir</th><th>Tgl Lahir</th><th>No. HP</th><th>Aksi</th></tr></thead>
+          <tbody id="generusBody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- Kehadiran -->
+    <div class="page" id="page-kehadiran">
+      <div class="section-head"><h2>Kehadiran</h2><button class="btn btn-primary" onclick="saveKehadiran()"><i class="fa-solid fa-floppy-disk"></i> Simpan Kehadiran</button></div>
+      <div class="date-row">
+        <label><i class="fa-regular fa-calendar" style="color:var(--primary);margin-right:6px"></i>Tanggal Pengajian</label>
+        <input type="date" id="tglKehadiran" onchange="loadKehadiranCards()" />
+      </div>
+      <div class="summary-bar" id="hadiranSummary">
+        <div class="sum-item"><div class="sum-dot" style="background:var(--primary)"></div><span class="sum-label">Hadir:</span><span class="sum-val" id="sumHadir">0</span></div>
+        <div class="sum-item"><div class="sum-dot" style="background:var(--warning)"></div><span class="sum-label">Izin:</span><span class="sum-val" id="sumIzin">0</span></div>
+        <div class="sum-item"><div class="sum-dot" style="background:var(--danger)"></div><span class="sum-label">Alfa:</span><span class="sum-val" id="sumAlfa">0</span></div>
+        <div class="sum-item"><div class="sum-dot" style="background:var(--border)"></div><span class="sum-label">Belum:</span><span class="sum-val" id="sumBelum">0</span></div>
+      </div>
+      <div class="hadir-grid" id="hadiranCards"></div>
+    </div>
+
+    <!-- Infaq -->
+    <div class="page" id="page-infaq">
+      <div class="section-head"><h2>Infaq</h2><button class="btn btn-primary" onclick="saveInfaq()"><i class="fa-solid fa-floppy-disk"></i> Simpan Infaq</button></div>
+      <div class="date-row">
+        <label><i class="fa-regular fa-calendar" style="color:var(--primary);margin-right:6px"></i>Tanggal Pertemuan</label>
+        <input type="date" id="tglInfaq" onchange="loadInfaqTable()" />
+      </div>
+      <div class="infaq-table-card">
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Nama</th><th>Kategori</th><th>Nominal Infaq (Rp)</th></tr></thead>
+          <tbody id="infaqBody"></tbody>
+        </table></div>
+        <div class="infaq-total-row"><span>Total Infaq Hari Ini</span><span class="infaq-total" id="infaqTotalRow">Rp 0</span></div>
+      </div>
+    </div>
+
+    <!-- Laporan -->
+    <div class="page" id="page-laporan">
+      <div class="section-head"><h2>Laporan</h2></div>
+      <div class="laporan-grid">
+        <div class="laporan-card"><i class="fa-solid fa-users"></i><h4>Total Generus</h4><p id="lp-total">0 orang terdaftar</p></div>
+        <div class="laporan-card"><i class="fa-solid fa-clipboard-check"></i><h4>Total Pertemuan</h4><p id="lp-pertemuan">0 kali pertemuan</p></div>
+        <div class="laporan-card"><i class="fa-solid fa-sack-dollar"></i><h4>Total Infaq</h4><p id="lp-infaq">Rp 0</p></div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-head"><h3>Kehadiran per Bulan</h3></div>
+          <div style="position:relative;height:220px"><canvas id="laporanKChart" role="img" aria-label="Grafik kehadiran laporan">Kehadiran per bulan.</canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><h3>Infaq per Bulan</h3></div>
+          <div style="position:relative;height:220px"><canvas id="laporanIChart" role="img" aria-label="Grafik infaq laporan">Infaq per bulan.</canvas></div>
+        </div>
+      </div>
+      <div class="chart-card" style="margin-top:16px">
+        <div class="chart-head"><h3>Rekap Kehadiran per Generus</h3></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Nama</th><th>Hadir</th><th>Izin</th><th>Alfa</th><th>% Hadir</th></tr></thead>
+          <tbody id="rekapBody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Modal: Add/Edit Generus -->
+<div class="modal-overlay" id="generusModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Tambah Generus</h3>
+      <button class="modal-close" onclick="closeModal('generusModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId" />
+      <div class="form-row">
+        <div class="form-group"><label>Nama Lengkap *</label><input id="f-nama" placeholder="Nama lengkap" /></div>
+        <div class="form-group"><label>Kategori *</label>
+          <select id="f-kat"><option value="">Pilih kategori</option><option value="Muda">Muda</option><option value="Mudi">Mudi</option><option value="Caberawit">Caberawit</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Tempat Lahir</label><input id="f-tempat" placeholder="Kota kelahiran" /></div>
+        <div class="form-group"><label>Tanggal Lahir</label><input type="date" id="f-tgl" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>No. HP / WhatsApp</label><input id="f-hp" placeholder="0812-xxxx-xxxx" /></div>
+        <div class="form-group"><label>Nama Orang Tua</label><input id="f-ortu" placeholder="Nama ayah/ibu" /></div>
+      </div>
+      <div class="form-group"><label>Alamat</label><input id="f-alamat" placeholder="Alamat lengkap" /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('generusModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveGenerus()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Profile Generus -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Profil Generus</h3>
+      <button class="modal-close" onclick="closeModal('profileModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="profileBody"></div>
+  </div>
+</div>
+
+<!-- Confirm dialog -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <h3>Hapus Data?</h3>
+    <p id="confirmMsg">Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-danger" id="confirmYes">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ==================== DATA & STORAGE ====================
+let db = { generus: [], kehadiran: {}, infaq: {} };
+let currentFilter = 'Semua';
+let charts = {};
+let confirmCallback = null;
+
+function loadDB() {
+  const saved = localStorage.getItem('generusGonjen');
+  if (saved) { db = JSON.parse(saved); } else { seedData(); }
+}
+function saveDB() { localStorage.setItem('generusGonjen', JSON.stringify(db)); }
+
+function seedData() {
+  db.generus = [
+    { id: 1, nama: 'Ahmad Fauzan', kat: 'Muda', tempat: 'Klaten', tgl: '2005-03-15', hp: '0812-3456-7890', ortu: 'Bapak Suhardi', alamat: 'Jl. Melati No. 12, Gonjen' },
+    { id: 2, nama: 'Siti Aisyah', kat: 'Mudi', tempat: 'Bantul', tgl: '2006-07-22', hp: '0821-2345-6789', ortu: 'Bapak Wahyu', alamat: 'Jl. Mawar No. 5, Gonjen' },
+    { id: 3, nama: 'Rizky Maulana', kat: 'Muda', tempat: 'Sleman', tgl: '2004-11-08', hp: '0857-1234-5678', ortu: 'Bapak Hadi', alamat: 'Jl. Anggrek No. 8, Gonjen' },
+    { id: 4, nama: 'Nadia Putri', kat: 'Mudi', tempat: 'Klaten', tgl: '2007-02-14', hp: '0813-2222-3333', ortu: 'Ibu Sri', alamat: 'Jl. Kenanga No. 3, Gonjen' },
+    { id: 5, nama: 'Fajar Ramadhan', kat: 'Caberawit', tempat: 'Bantul', tgl: '2010-09-01', hp: '0856-9876-5432', ortu: 'Bapak Joko', alamat: 'Jl. Dahlia No. 7, Gonjen' },
+    { id: 6, nama: 'Zahra Amalia', kat: 'Caberawit', tempat: 'Sleman', tgl: '2011-04-20', hp: '0811-5678-9012', ortu: 'Ibu Dewi', alamat: 'Jl. Tulip No. 2, Gonjen' },
+  ];
+  const now = new Date(); const m = String(now.getMonth()+1).padStart(2,'0'); const y = now.getFullYear();
+  const dates = [`${y}-${m}-03`,`${y}-${m}-10`,`${y}-${m}-17`];
+  dates.forEach(d => {
+    db.kehadiran[d] = {};
+    db.generus.forEach(g => {
+      const r = Math.random(); db.kehadiran[d][g.id] = r > .15 ? (r > .3 ? 'Hadir' : 'Izin') : 'Alfa';
+    });
+    db.infaq[d] = {};
+    db.generus.forEach(g => { db.infaq[d][g.id] = [5000,10000,15000,20000][Math.floor(Math.random()*4)]; });
+  });
+  saveDB();
+}
+
+// ==================== NAVIGATION ====================
+const pages = ['dashboard','generus','kehadiran','infaq','laporan'];
+const pageTitles = { dashboard:'Dashboard', generus:'Data Generus', kehadiran:'Kehadiran', infaq:'Infaq', laporan:'Laporan' };
+const pageSubs = { dashboard:'Selamat datang, Admin Generus 👋', generus:'Kelola data anggota generus', kehadiran:'Catat kehadiran pengajian', infaq:'Catat infaq pertemuan', laporan:'Rekap & statistik' };
+
+function navigate(page) {
+  pages.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+    document.querySelectorAll('.nav-item')[pages.indexOf(p)].classList.remove('active');
+  });
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item')[pages.indexOf(page)].classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[page];
+  document.getElementById('pageSubtitle').textContent = pageSubs[page];
+  closeSidebar();
+  if (page === 'dashboard') refreshDashboard();
+  if (page === 'generus') renderGenerusTable();
+  if (page === 'kehadiran') loadKehadiranCards();
+  if (page === 'infaq') loadInfaqTable();
+  if (page === 'laporan') renderLaporan();
+}
+
+// ==================== DARK MODE ====================
+function toggleDark() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('darkPill').classList.toggle('on', !isDark);
+  localStorage.setItem('darkMode', isDark ? '0' : '1');
+  setTimeout(() => { refreshDashboard(); }, 100);
+}
+function initDark() {
+  if (localStorage.getItem('darkMode') === '1') {
+    document.documentElement.setAttribute('data-theme','dark');
+    document.getElementById('darkPill').classList.add('on');
+  }
+}
+
+// ==================== SIDEBAR ====================
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlayBg').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlayBg').classList.remove('show');
+}
+
+// ==================== TOAST ====================
+function showToast(msg, type = 'success') {
+  const icons = { success: 'fa-check-circle', warning: 'fa-triangle-exclamation', danger: 'fa-circle-xmark' };
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fa-solid ${icons[type]}"></i>${msg}`;
+  c.appendChild(t);
+  requestAnimationFrame(() => { requestAnimationFrame(() => { t.classList.add('show'); }); });
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
+}
+
+// ==================== CONFIRM ====================
+function showConfirm(msg, cb) {
+  document.getElementById('confirmMsg').textContent = msg;
+  document.getElementById('confirmOverlay').classList.add('open');
+  confirmCallback = cb;
+}
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); confirmCallback = null; }
+document.getElementById('confirmYes').onclick = () => { if (confirmCallback) confirmCallback(); closeConfirm(); };
+
+// ==================== MODAL ====================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ==================== HELPERS ====================
+function initials(nama) { return nama.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase(); }
+function avClass(kat) { return { Muda:'av-blue', Mudi:'av-pink', Caberawit:'av-amber' }[kat] || ''; }
+function katBadge(kat) { const c = { Muda:'kat-muda', Mudi:'kat-mudi', Caberawit:'kat-cabe' }[kat] || ''; return `<span class="kategori-badge ${c}">${kat}</span>`; }
+function fmtRp(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+function fmtTgl(s) { if (!s) return '-'; const d = new Date(s + 'T00:00:00'); return d.toLocaleDateString('id-ID', {day:'2-digit',month:'long',year:'numeric'}); }
+function nextId() { return db.generus.length ? Math.max(...db.generus.map(g => g.id)) + 1 : 1; }
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function bulanStr() { const n = new Date(); return `${String(n.getMonth()+1).padStart(2,'0')}-${n.getFullYear()}`; }
+
+// ==================== DASHBOARD ====================
+function refreshDashboard() {
+  const total = db.generus.length;
+  const muda = db.generus.filter(g => g.kat === 'Muda').length;
+  const mudi = db.generus.filter(g => g.kat === 'Mudi').length;
+  const cabe = db.generus.filter(g => g.kat === 'Caberawit').length;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-muda').textContent = muda;
+  document.getElementById('s-mudi').textContent = mudi;
+  document.getElementById('s-cabe').textContent = cabe;
+
+  // Kehadiran bulan ini
+  const now = new Date(); const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  let hadirCount = 0; let totalCount = 0;
+  Object.entries(db.kehadiran).forEach(([d, v]) => {
+    if (d.startsWith(ym)) { Object.values(v).forEach(s => { totalCount++; if (s === 'Hadir') hadirCount++; }); }
+  });
+  const pct = totalCount > 0 ? Math.round((hadirCount / totalCount) * 100) : 0;
+  document.getElementById('pctText').textContent = pct + '%';
+  document.getElementById('donutPct').textContent = pct + '%';
+  const badge = document.getElementById('pctBadge');
+  badge.className = 'mid-badge ' + (pct >= 80 ? 'badge-success' : pct >= 60 ? 'badge-warning' : 'badge-danger');
+  badge.innerHTML = `<i class="fa-solid fa-thumbs-up"></i> ${pct >= 80 ? 'Sangat Baik' : pct >= 60 ? 'Cukup' : 'Perlu Perhatian'}`;
+
+  // Infaq bulan ini
+  let infaqBulan = 0;
+  Object.entries(db.infaq).forEach(([d, v]) => {
+    if (d.startsWith(ym)) { Object.values(v).forEach(n => { infaqBulan += Number(n || 0); }); }
+  });
+  document.getElementById('infaqTotal').textContent = fmtRp(infaqBulan);
+  document.getElementById('infaqDate').textContent = 'Per ' + new Date().toLocaleDateString('id-ID', {day:'2-digit',month:'long',year:'numeric'});
+
+  // Pertemuan
+  const pertemuan = Object.keys(db.kehadiran).length;
+  document.getElementById('totalPertemuan').textContent = pertemuan;
+
+  buildDonut(pct);
+  buildCharts();
+}
+
+function buildDonut(pct) {
+  const ctx = document.getElementById('donutChart').getContext('2d');
+  if (charts.donut) charts.donut.destroy();
+  charts.donut = new Chart(ctx, {
+    type: 'doughnut',
+    data: { datasets: [{ data: [pct, 100-pct], backgroundColor: ['#22C55E', getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#E2E8F0'], borderWidth: 0, circumference: 360, cutout: '75%' }] },
+    options: { responsive: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 600 } }
+  });
+}
+
+function getMonthlyKData(year) {
+  const months = Array(12).fill(0); const totals = Array(12).fill(0);
+  Object.entries(db.kehadiran).forEach(([d, v]) => {
+    if (d.startsWith(year)) {
+      const m = parseInt(d.split('-')[1]) - 1;
+      Object.values(v).forEach(s => { totals[m]++; if (s === 'Hadir') months[m]++; });
+    }
+  });
+  return months.map((h, i) => totals[i] > 0 ? Math.round((h / totals[i]) * 100) : 0);
+}
+
+function getMonthlyIData(year) {
+  const months = Array(12).fill(0);
+  Object.entries(db.infaq).forEach(([d, v]) => {
+    if (d.startsWith(year)) {
+      const m = parseInt(d.split('-')[1]) - 1;
+      Object.values(v).forEach(n => { months[m] += Number(n || 0); });
+    }
+  });
+  return months;
+}
+
+const MONTHS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+function buildCharts() {
+  const yr = new Date().getFullYear().toString();
+  buildKehadiranChart(yr, 'kehadiranChart');
+  buildInfaqChart(yr, 'infaqChart');
+}
+
+function buildKehadiranChart(year, canvasId) {
+  const data = getMonthlyKData(year);
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if (charts[canvasId]) charts[canvasId].destroy();
+  charts[canvasId] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: MONTHS,
+      datasets: [{ label: 'Kehadiran (%)', data, borderColor: '#22C55E', backgroundColor: 'rgba(34,197,94,.12)', fill: true, tension: .4, pointRadius: 4, pointBackgroundColor: '#22C55E', pointBorderColor: '#fff', pointBorderWidth: 2 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + '%' } } },
+      scales: { y: { min: 0, max: 100, ticks: { callback: v => v+'%', font: { size: 11 }, color: '#94A3B8' }, grid: { color: 'rgba(148,163,184,.15)' } }, x: { ticks: { font: { size: 11 }, color: '#94A3B8' }, grid: { display: false } } }
+    }
+  });
+}
+
+function buildInfaqChart(year, canvasId) {
+  const data = getMonthlyIData(year);
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if (charts[canvasId]) charts[canvasId].destroy();
+  charts[canvasId] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: MONTHS,
+      datasets: [{ label: 'Infaq (Rp)', data, backgroundColor: 'rgba(34,197,94,.7)', borderRadius: 6, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => fmtRp(ctx.parsed.y) } } },
+      scales: { y: { ticks: { callback: v => 'Rp '+v/1000+'rb', font: { size: 11 }, color: '#94A3B8' }, grid: { color: 'rgba(148,163,184,.15)' } }, x: { ticks: { font: { size: 11 }, color: '#94A3B8' }, grid: { display: false } } }
+    }
+  });
+}
+
+function updateKehadiranChart(year) { buildKehadiranChart(year, 'kehadiranChart'); }
+function updateInfaqChart(year) { buildInfaqChart(year, 'infaqChart'); }
+
+// ==================== DATA GENERUS ====================
+function renderGenerusTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let data = db.generus.filter(g => {
+    const matchQ = g.nama.toLowerCase().includes(q) || (g.hp||'').includes(q) || (g.alamat||'').toLowerCase().includes(q);
+    const matchF = currentFilter === 'Semua' || g.kat === currentFilter;
+    return matchQ && matchF;
+  });
+  const tbody = document.getElementById('generusBody');
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-inbox"></i>Tidak ada data ditemukan</div></td></tr>`; return; }
+  tbody.innerHTML = data.map((g, i) => `<tr onclick="showProfile(${g.id})">
+    <td style="color:var(--text3);font-size:12px">${i+1}</td>
+    <td><div class="name-cell"><div class="avatar ${avClass(g.kat)}">${initials(g.nama)}</div><div><div class="name-main">${g.nama}</div><div class="name-sub">${g.hp||'-'}</div></div></div></td>
+    <td>${katBadge(g.kat)}</td>
+    <td style="font-size:13px;color:var(--text2)">${g.tempat||'-'}</td>
+    <td style="font-size:13px;color:var(--text2)">${fmtTgl(g.tgl)}</td>
+    <td style="font-size:13px;color:var(--text2)">${g.hp||'-'}</td>
+    <td><div class="action-btns" onclick="event.stopPropagation()">
+      <button class="btn btn-sm btn-edit" onclick="openEditModal(${g.id})"><i class="fa-solid fa-pen"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="hapusGenerus(${g.id})"><i class="fa-solid fa-trash"></i></button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderGenerusTable();
+}
+
+function openAddModal() {
+  document.getElementById('modalTitle').textContent = 'Tambah Generus';
+  ['f-nama','f-kat','f-tempat','f-tgl','f-hp','f-ortu','f-alamat'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('editId').value = '';
+  openModal('generusModal');
+}
+
+function openEditModal(id) {
+  const g = db.generus.find(x => x.id === id);
+  if (!g) return;
+  document.getElementById('modalTitle').textContent = 'Edit Generus';
+  document.getElementById('editId').value = id;
+  document.getElementById('f-nama').value = g.nama;
+  document.getElementById('f-kat').value = g.kat;
+  document.getElementById('f-tempat').value = g.tempat || '';
+  document.getElementById('f-tgl').value = g.tgl || '';
+  document.getElementById('f-hp').value = g.hp || '';
+  document.getElementById('f-ortu').value = g.ortu || '';
+  document.getElementById('f-alamat').value = g.alamat || '';
+  openModal('generusModal');
+}
+
+function saveGenerus() {
+  const nama = document.getElementById('f-nama').value.trim();
+  const kat = document.getElementById('f-kat').value;
+  if (!nama || !kat) { showToast('Nama dan kategori wajib diisi!', 'warning'); return; }
+  const editId = document.getElementById('editId').value;
+  const data = { nama, kat, tempat: document.getElementById('f-tempat').value, tgl: document.getElementById('f-tgl').value, hp: document.getElementById('f-hp').value, ortu: document.getElementById('f-ortu').value, alamat: document.getElementById('f-alamat').value };
+  if (editId) {
+    const idx = db.generus.findIndex(g => g.id == editId);
+    db.generus[idx] = { ...db.generus[idx], ...data };
+    showToast('Data generus berhasil diperbarui');
+  } else {
+    db.generus.push({ id: nextId(), ...data });
+    showToast('Generus berhasil ditambahkan');
+  }
+  saveDB(); closeModal('generusModal'); renderGenerusTable();
+}
+
+function hapusGenerus(id) {
+  const g = db.generus.find(x => x.id === id);
+  showConfirm(`Hapus data ${g.nama}? Data kehadiran dan infaq terkait juga akan dihapus.`, () => {
+    db.generus = db.generus.filter(x => x.id !== id);
+    Object.keys(db.kehadiran).forEach(d => delete db.kehadiran[d][id]);
+    Object.keys(db.infaq).forEach(d => delete db.infaq[d][id]);
+    saveDB(); renderGenerusTable(); showToast('Data generus dihapus', 'danger');
+  });
+}
+
+// ==================== PROFILE ====================
+function showProfile(id) {
+  const g = db.generus.find(x => x.id === id); if (!g) return;
+  const recs = Object.entries(db.kehadiran);
+  let hadir = 0, izin = 0, alfa = 0;
+  recs.forEach(([, v]) => { const s = v[id]; if (s === 'Hadir') hadir++; else if (s === 'Izin') izin++; else if (s === 'Alfa') alfa++; });
+  const total = hadir + izin + alfa;
+  const pct = total > 0 ? Math.round((hadir / total) * 100) : 0;
+  let infaqTotal = 0;
+  Object.values(db.infaq).forEach(v => { infaqTotal += Number(v[id] || 0); });
+  const riwayatK = Object.entries(db.kehadiran).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 5);
+  const riwayatI = Object.entries(db.infaq).filter(([, v]) => v[id]).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 5);
+  const statusColor = { Hadir: '#22C55E', Izin: '#FACC15', Alfa: '#EF4444' };
+  document.getElementById('profileBody').innerHTML = `
+    <div class="profile-modal-top">
+      <div class="profile-avatar-lg ${avClass(g.kat)}">${initials(g.nama)}</div>
+      <div><div class="profile-name">${g.nama}</div>${katBadge(g.kat)}</div>
+    </div>
+    ${g.alamat ? `<div class="profile-info-row"><i class="fa-solid fa-location-dot"></i>${g.alamat}</div>` : ''}
+    ${g.hp ? `<div class="profile-info-row"><i class="fa-brands fa-whatsapp"></i>${g.hp}</div>` : ''}
+    ${g.ortu ? `<div class="profile-info-row"><i class="fa-solid fa-user-group"></i>${g.ortu}</div>` : ''}
+    ${g.tgl ? `<div class="profile-info-row"><i class="fa-solid fa-cake-candles"></i>${fmtTgl(g.tgl)}, ${g.tempat||''}</div>` : ''}
+    <div class="profile-stats">
+      <div class="profile-stat"><div class="profile-stat-val">${pct}%</div><div class="profile-stat-label">Kehadiran</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" style="font-size:16px">${fmtRp(infaqTotal)}</div><div class="profile-stat-label">Total Infaq</div></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchProfileTab('k',this)">Riwayat Kehadiran</div>
+      <div class="tab" onclick="switchProfileTab('i',this)">Riwayat Infaq</div>
+    </div>
+    <div id="tabK">
+      ${riwayatK.length ? riwayatK.map(([d, v]) => v[id] ? `<div class="riwayat-row"><span>${fmtTgl(d)}</span><span style="color:${statusColor[v[id]]||'#94A3B8'};font-weight:600">${v[id]||'-'}</span></div>` : '').join('') : '<div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i>Belum ada catatan</div>'}
+    </div>
+    <div id="tabI" style="display:none">
+      ${riwayatI.length ? riwayatI.map(([d, v]) => `<div class="riwayat-row"><span>${fmtTgl(d)}</span><span style="color:var(--primary);font-weight:600">${fmtRp(v[id])}</span></div>`).join('') : '<div class="empty-state"><i class="fa-solid fa-hand-holding-dollar"></i>Belum ada catatan</div>'}
+    </div>`;
+  openModal('profileModal');
+}
+
+function switchProfileTab(tab, el) {
+  document.querySelectorAll('#profileBody .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tabK').style.display = tab === 'k' ? 'block' : 'none';
+  document.getElementById('tabI').style.display = tab === 'i' ? 'block' : 'none';
+}
+
+// ==================== KEHADIRAN ====================
+function loadKehadiranCards() {
+  const tgl = document.getElementById('tglKehadiran').value;
+  if (!tgl) return;
+  const rec = db.kehadiran[tgl] || {};
+  const grid = document.getElementById('hadiranCards');
+  if (!db.generus.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="fa-solid fa-users-slash"></i>Belum ada data generus</div>`; return; }
+  grid.innerHTML = db.generus.map(g => {
+    const st = rec[g.id] || null;
+    const dotCls = st === 'Hadir' ? 'dot-hadir' : st === 'Izin' ? 'dot-izin' : st === 'Alfa' ? 'dot-alfa' : 'dot-none';
+    return `<div class="hadir-card">
+      <div class="hadir-card-left">
+        <div class="status-dot ${dotCls}" id="dot-${g.id}"></div>
+        <div class="avatar ${avClass(g.kat)}">${initials(g.nama)}</div>
+        <div><div class="hadir-card-name">${g.nama}</div>${katBadge(g.kat)}</div>
+      </div>
+      <div class="hadir-btns">
+        <button class="hbtn hbtn-hadir ${st==='Hadir'?'selected-hadir':''}" onclick="setHadir(${g.id},'Hadir')" title="Hadir"><i class="fa-solid fa-check"></i></button>
+        <button class="hbtn hbtn-izin ${st==='Izin'?'selected-izin':''}" onclick="setHadir(${g.id},'Izin')" title="Izin"><i class="fa-solid fa-clock"></i></button>
+        <button class="hbtn hbtn-alfa ${st==='Alfa'?'selected-alfa':''}" onclick="setHadir(${g.id},'Alfa')" title="Alfa"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+  updateSummary(tgl);
+}
+
+function setHadir(gid, status) {
+  const tgl = document.getElementById('tglKehadiran').value; if (!tgl) return;
+  if (!db.kehadiran[tgl]) db.kehadiran[tgl] = {};
+  db.kehadiran[tgl][gid] = status;
+  const btns = document.querySelectorAll(`button[onclick*="setHadir(${gid},"]`);
+  btns.forEach(b => b.className = b.className.replace(/selected-\w+/g, '').trim());
+  const cls = status === 'Hadir' ? 'selected-hadir' : status === 'Izin' ? 'selected-izin' : 'selected-alfa';
+  const idx = ['Hadir','Izin','Alfa'].indexOf(status);
+  if (idx >= 0) btns[idx].classList.add(cls);
+  const dot = document.getElementById('dot-' + gid);
+  if (dot) dot.className = 'status-dot ' + (status === 'Hadir' ? 'dot-hadir' : status === 'Izin' ? 'dot-izin' : 'dot-alfa');
+  updateSummary(tgl);
+}
+
+function updateSummary(tgl) {
+  const rec = db.kehadiran[tgl] || {};
+  const vals = Object.values(rec);
+  document.getElementById('sumHadir').textContent = vals.filter(v => v === 'Hadir').length;
+  document.getElementById('sumIzin').textContent = vals.filter(v => v === 'Izin').length;
+  document.getElementById('sumAlfa').textContent = vals.filter(v => v === 'Alfa').length;
+  document.getElementById('sumBelum').textContent = db.generus.filter(g => !rec[g.id]).length;
+}
+
+function saveKehadiran() {
+  const tgl = document.getElementById('tglKehadiran').value; if (!tgl) { showToast('Pilih tanggal terlebih dahulu', 'warning'); return; }
+  saveDB(); showToast('Kehadiran berhasil disimpan ✓');
+}
+
+// ==================== INFAQ ====================
+function loadInfaqTable() {
+  const tgl = document.getElementById('tglInfaq').value; if (!tgl) return;
+  const rec = db.infaq[tgl] || {};
+  const tbody = document.getElementById('infaqBody');
+  if (!db.generus.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fa-solid fa-users-slash"></i>Belum ada data generus</div></td></tr>`; return; }
+  tbody.innerHTML = db.generus.map((g, i) => {
+    const val = rec[g.id] || 0;
+    return `<tr>
+      <td style="color:var(--text3);font-size:12px">${i+1}</td>
+      <td><div class="name-cell"><div class="avatar ${avClass(g.kat)}">${initials(g.nama)}</div><div class="name-main">${g.nama}</div></div></td>
+      <td>${katBadge(g.kat)}</td>
+      <td><input class="infaq-input" type="number" min="0" step="1000" value="${val}" id="infaq-${g.id}" oninput="updateInfaqTotal()" placeholder="0" /></td>
+    </tr>`;
+  }).join('');
+  updateInfaqTotal();
+}
+
+function updateInfaqTotal() {
+  let total = 0;
+  db.generus.forEach(g => { const el = document.getElementById('infaq-'+g.id); if (el) total += Number(el.value || 0); });
+  document.getElementById('infaqTotalRow').textContent = fmtRp(total);
+}
+
+function saveInfaq() {
+  const tgl = document.getElementById('tglInfaq').value; if (!tgl) { showToast('Pilih tanggal terlebih dahulu', 'warning'); return; }
+  if (!db.infaq[tgl]) db.infaq[tgl] = {};
+  db.generus.forEach(g => { const el = document.getElementById('infaq-'+g.id); if (el) db.infaq[tgl][g.id] = Number(el.value || 0); });
+  saveDB(); showToast('Infaq berhasil disimpan ✓');
+}
+
+// ==================== LAPORAN ====================
+function renderLaporan() {
+  const total = db.generus.length;
+  const pertemuan = Object.keys(db.kehadiran).length;
+  let infaqTotal = 0;
+  Object.values(db.infaq).forEach(v => Object.values(v).forEach(n => { infaqTotal += Number(n || 0); }));
+  document.getElementById('lp-total').textContent = total + ' orang terdaftar';
+  document.getElementById('lp-pertemuan').textContent = pertemuan + ' kali pertemuan';
+  document.getElementById('lp-infaq').textContent = fmtRp(infaqTotal);
+
+  const yr = new Date().getFullYear().toString();
+  buildKehadiranChart(yr, 'laporanKChart');
+  buildInfaqChart(yr, 'laporanIChart');
+
+  const tbody = document.getElementById('rekapBody');
+  tbody.innerHTML = db.generus.map(g => {
+    let h = 0, iz = 0, al = 0;
+    Object.values(db.kehadiran).forEach(v => { if (v[g.id] === 'Hadir') h++; else if (v[g.id] === 'Izin') iz++; else if (v[g.id] === 'Alfa') al++; });
+    const tot = h + iz + al; const pct = tot ? Math.round(h / tot * 100) : 0;
+    return `<tr>
+      <td><div class="name-cell"><div class="avatar ${avClass(g.kat)}">${initials(g.nama)}</div><div class="name-main">${g.nama}</div></div></td>
+      <td style="color:var(--primary);font-weight:600">${h}</td>
+      <td style="color:#D97706;font-weight:600">${iz}</td>
+      <td style="color:var(--danger);font-weight:600">${al}</td>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:6px;background:var(--border);border-radius:4px;overflow:hidden"><div style="width:${pct}%;height:100%;background:var(--primary);border-radius:4px"></div></div>
+        <span style="font-size:12px;font-weight:600;color:var(--text2);min-width:30px">${pct}%</span>
+      </div></td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-inbox"></i>Belum ada data</div></td></tr>`;
+}
+
+// ==================== INIT ====================
+function init() {
+  loadDB(); initDark();
+  const now = new Date();
+  document.getElementById('todayDate').textContent = now.toLocaleDateString('id-ID', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+  document.getElementById('tglKehadiran').value = todayStr();
+  document.getElementById('tglInfaq').value = todayStr();
+  refreshDashboard();
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
